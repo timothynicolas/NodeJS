@@ -1,3 +1,5 @@
+// Take the raw HTTP code above and refactor it using the helper function idea from Q17 — write a sendResponse(res, statusCode, contentType, content) function, then rewrite all three branches (/, /about, 404) to call it instead of repeating writeHead/write/end three times.
+
 const http = require("http");
 
 const server = http.createServer((req, res) => {
