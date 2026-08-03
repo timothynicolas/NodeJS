@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Javascript</title>
+  </head>
+  <body>
+    <form>
+      <input
+        class="name-input"
+        type="text"
+        name="name"
+        placeholder="Enter Name"
+      /><br />
+      <input
+        class="message-input"
+        type="text"
+        name="message"
+        placeholder="Enter Message"
+      /><br />
+      <small class="form-alert"></small>
+      <button class="submit-btn" type="submit">Submit</button>
+    </form>
+    <div class="result"></div>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"
+      integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ=="
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      const result = document.querySelector(".result");
+
+      const fetchFeedback = async () => {
+        try {
+          const { data } = await axios.get("/api/feedback");
+
+          const feedback = data.data.map((item) => {
+            return `<h5>${item.name} - ${item.message}</h5>`;
+          });
+          result.innerHTML = feedback.join("");
+        } catch (error) {
+          result.innerHTML = `<div class="alert alert-danger">Can't Fetch Data</div> ${error}`;
+        }
+      };
+
+      fetchFeedback();
+
+      const btn = document.querySelector(".submit-btn");
+      const nameInput = document.querySelector(".name-input");
+      const messageInput = document.querySelector(".message-input");
+      const formAlert = document.querySelector(".form-alert");
+
+      btn.addEventListener("click", async (e) => {
+        console.log("btn works");
+        e.preventDefault();
+        const nameValue = nameInput.value;
+        const messageValue = messageInput.value;
+
+        try {
+          const { data } = await axios.post("/api/feedback", {
+            name: nameValue,
+            message: messageValue,
+          });
+          const h5 = document.createElement("h5");
+          h5.textContent = `${data.name} - ${data.message}`;
+          result.appendChild(h5);
+        } catch (error) {
+          formAlert.textContent = error.response.data.msg;
+        }
+        nameInput.value = "";
+        messageInput.value = "";
+      });
+    </script>
+  </body>
+</html>
